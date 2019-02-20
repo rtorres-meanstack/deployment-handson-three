@@ -145,5 +145,4 @@ function sshConnect() {
       process.exit(1);
     });
 }
-
 main();
