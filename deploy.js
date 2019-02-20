@@ -22,16 +22,15 @@ function installPM2() {
 // transfers local project to the remote server
 function transferProjectToRemote(failed, successful) {
   return ssh.putDirectory(
-    '../riot-express-todo-list',
-    '/home/ubuntu/riot-express-todo-list-temp',
+    '../deployment-handson-three',
+    '/home/ubuntu/deployment-handson-three-temp',
     {
       recursive: true,
       concurrency: 1,
       validate: function(itemPath) {
         const baseName = path.basename(itemPath);
         return (
-        //   baseName.substr(0, 1) !== '.' && 
-          baseName !== 'node_modules' // do not allow dot files
+          baseName.substr(0, 1) !== '.' && baseName !== 'node_modules' // do not allow dot files
         ); // do not allow node_modules
       },
       tick: function(localPath, remotePath, error) {
@@ -50,7 +49,7 @@ function transferProjectToRemote(failed, successful) {
 // creates a temporary folder on the remote server
 function createRemoteTempFolder() {
   return ssh.execCommand(
-    'rm -rf riot-express-todo-list-temp && mkdir riot-express-todo-list-temp', {
+    'rm -rf deployment-handson-three-temp && mkdir deployment-handson-three-temp', {
       cwd: '/home/ubuntu'
   });
 }
@@ -66,7 +65,7 @@ function stopRemoteServices() {
 // updates the project source on the server
 function updateRemoteApp() {
   return ssh.execCommand(
-    'cp -r riot-express-todo-list-temp/* riot-express-todo-list/ && rm -rf riot-express-todo-list-temp', {
+    'cp -r deployment-handson-three-temp/* deployment-handson-three/ && rm -rf deployment-handson-three-temp', {
       cwd: '/home/ubuntu'
   });
 }
@@ -74,7 +73,7 @@ function updateRemoteApp() {
 // restart mongodb and node services on the remote server
 function restartRemoteServices() {
   return ssh.execCommand(
-    'cd riot-express-todo-list && sudo service mongod start && pm2 start app.js', {
+    'cd deployment-handson-three && sudo service mongod start && pm2 start app.js', {
       cwd: '/home/ubuntu'
   });
 }
@@ -96,7 +95,7 @@ function sshConnect() {
       return installPM2();
     })
     .then(function() {
-      console.log('Creating `riot-express-todo-list-temp` folder.');
+      console.log('Creating `deployment-handson-three-temp` folder.');
       return createRemoteTempFolder();
     })
     .then(function(result) {
